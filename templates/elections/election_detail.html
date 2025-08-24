@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ election.title }} - Voting{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>{{ election.title }}</h2>
+        <p>{{ election.description }}</p>
+        
+        <div class="row">
+            {% for position in positions %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>{{ position.name }}</h4>
+                        </div>
+                        <div class="card-body">
+                            {% if position.id in voted_positions %}
+                                <div class="alert alert-success">
+                                    ✓ You have already voted for this position
+                                </div>
+                            {% else %}
+                                <a href="{% url 'vote_position' position.id %}" class="btn btn-primary">
+                                    Vote for {{ position.name }}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

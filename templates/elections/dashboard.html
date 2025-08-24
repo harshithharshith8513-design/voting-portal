@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Discover College Voting{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Welcome to Discover College Voting System</h2>
+        
+        {% if elections %}
+            <h4>Active Elections</h4>
+            <div class="row">
+                {% for election in elections %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ election.title }}</h5>
+                                <p class="card-text">{{ election.description }}</p>
+                                <p><strong>Start:</strong> {{ election.start_date }}</p>
+                                <p><strong>End:</strong> {{ election.end_date }}</p>
+                                <a href="{% url 'election_detail' election.id %}" class="btn btn-primary">Vote Now</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <h4>No Active Elections</h4>
+                <p>There are currently no active elections. Please check back later or contact the administrator.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

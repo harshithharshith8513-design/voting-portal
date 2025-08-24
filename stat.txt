@@ -1,0 +1,12 @@
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py makemigrations users
+python manage.py makemigrations elections
+python manage.py migrate
+python manage.py createsuperuser
+if needed for now 
+name= admin
+pass= admin
+mail= admin123@gmail.com
+python manage.py runserver

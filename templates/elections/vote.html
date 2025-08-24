@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Vote for {{ position.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>Vote for {{ position.name }}</h3>
+                <p class="mb-0">{{ position.election.title }}</p>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {% for candidate in candidates %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {% if candidate.photo %}
+                                            <img src="{{ candidate.photo.url }}" class="img-fluid rounded" alt="{{ candidate.name }}">
+                                        {% else %}
+                                            <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="height: 120px;">
+                                                <span class="text-white">No Photo</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="candidate" value="{{ candidate.id }}" id="candidate{{ candidate.id }}" required>
+                                            <label class="form-check-label" for="candidate{{ candidate.id }}">
+                                                <h5>{{ candidate.name }}</h5>
+                                                <p><strong>Student ID:</strong> {{ candidate.student_id }}</p>
+                                                <p><strong>Manifesto:</strong> {{ candidate.manifesto }}</p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg">Cast Vote</button>
+                        <a href="{% url 'election_detail' position.election.id %}" class="btn btn-secondary">Back to Election</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

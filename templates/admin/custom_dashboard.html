@@ -1,0 +1,217 @@
+<!-- templates/admin/custom_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Discover College Voting</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'admin_dashboard' %}">
+                <i class="fas fa-vote-yea"></i> Voting Admin
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{% url 'admin_dashboard' %}">Dashboard</a>
+                <a class="nav-link" href="{% url 'manage_elections' %}">Elections</a>
+                <a class="nav-link" href="{% url 'manage_users' %}">Users</a>
+                <a class="nav-link" href="/admin/">Django Admin</a>
+                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ total_users }}</h4>
+                                <p class="mb-0">Total Users</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-users fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ active_elections }}</h4>
+                                <p class="mb-0">Active Elections</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-poll-h fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ total_votes }}</h4>
+                                <p class="mb-0">Total Votes</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ total_elections }}</h4>
+                                <p class="mb-0">Total Elections</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-calendar-alt fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Recent Votes -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-clock"></i> Recent Votes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Voter</th>
+                                        <th>Candidate</th>
+                                        <th>Position</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for vote in recent_votes %}
+                                    <tr>
+                                        <td>{{ vote.voter.username }}</td>
+                                        <td>{{ vote.candidate.name }}</td>
+                                        <td>{{ vote.position.name }}</td>
+                                        <td>{{ vote.timestamp|date:"M d, H:i" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department Statistics -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-pie"></i> User Distribution by Department</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="departmentChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Election Statistics -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-bar"></i> Election Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Election</th>
+                                        <th>Status</th>
+                                        <th>Positions</th>
+                                        <th>Candidates</th>
+                                        <th>Total Votes</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for election in election_stats %}
+                                    <tr>
+                                        <td>{{ election.title }}</td>
+                                        <td>
+                                            <span class="badge bg-{% if election.status == 'active' %}success{% elif election.status == 'ended' %}secondary{% else %}warning{% endif %}">
+                                                {{ election.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td>{{ election.position_count }}</td>
+                                        <td>{{ election.candidate_count }}</td>
+                                        <td>{{ election.vote_count }}</td>
+                                        <td>
+                                            <a href="{% url 'election_results' election.id %}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-chart-line"></i> Results
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Script -->
+    <script>
+        // Department Chart
+        const ctx = document.getElementById('departmentChart').getContext('2d');
+        const departmentChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    {% for dept in dept_stats %}'{{ dept.department }}'{% if not forloop.last %},{% endif %}{% endfor %}
+                ],
+                datasets: [{
+                    data: [
+                        {% for dept in dept_stats %}{{ dept.count }}{% if not forloop.last %},{% endif %}{% endfor %}
+                    ],
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
