@@ -1,60 +1,260 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register - Voting Portal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <h2>Register for Voting Portal</h2>
-                <form method="post">
+{% extends 'base.html' %}
+
+{% block title %}Register - Discover College Voting{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card animate__animated animate__fadeInUp">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                    <h2 class="card-title text-white">Create Account</h2>
+                    <p class="text-muted">Register with your College ID to vote</p>
+                </div>
+
+                <form method="post" novalidate>
                     {% csrf_token %}
+                    
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <input type="text" name="username" class="form-control" placeholder="Username" required>
+                            <label for="roll_number" class="form-label text-white">
+                                <i class="fas fa-id-badge me-1"></i>Roll Number <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" name="roll_number" id="roll_number" 
+                                   placeholder="e.g., CS21B001" required pattern="^[A-Za-z0-9]+$"
+                                   title="Roll number must contain both letters and numbers">
+                            <div class="form-text text-white-50">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Must contain both letters and numbers
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <input type="text" name="full_name" class="form-control" placeholder="Full Name" required>
+                            <label for="username" class="form-label text-white">
+                                <i class="fas fa-user me-1"></i>Full Name
+                            </label>
+                            <input type="text" class="form-control" name="username" id="username" 
+                                   placeholder="Your full name" required>
                         </div>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label text-white">
+                            <i class="fas fa-envelope me-1"></i>College Email
+                        </label>
+                        <input type="email" class="form-control" name="email" id="email" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label text-white">
+                            <i class="fas fa-lock me-1"></i>Password
+                        </label>
+                        <input type="password" class="form-control" name="password" id="password" 
+                               minlength="6" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="student_id" class="form-label text-white">
+                            <i class="fas fa-id-card me-1"></i>College ID <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" name="student_id" id="student_id" 
+                               placeholder="Enter your valid College ID" required>
+                        <div class="form-text text-white-50">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Only admin-approved College IDs can register
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <input type="email" name="email" class="form-control" placeholder="Email" required>
+                            <label for="department" class="form-label text-white">
+                                <i class="fas fa-building me-1"></i>Department
+                            </label>
+                            <select class="form-control" name="department" id="department" required>
+                                <option value="">Select Department</option>
+                                <option value="Bachelor of Computer Applications">Bachelor of Computer Applications</option>
+                                <option value="BSc Data Science">BSc Data Science</option>
+                                <option value="BCom">BCom</option>
+                                <option value="BSW">BSW</option>
+                                <option value="BBA">BBA</option>
+                                <option value="Others">Others</option>
+                            </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <input type="tel" name="phone" class="form-control" placeholder="Phone Number" required>
+                            <label for="year" class="form-label text-white">
+                                <i class="fas fa-calendar me-1"></i>Year/Semester
+                            </label>
+                            <select class="form-control" name="year" id="year" required>
+                                <option value="">Select Year/Semester</option>
+                                <option value="Semester 1">Semester 1</option>
+                                <option value="Semester 2">Semester 2</option>
+                                <option value="Semester 3">Semester 3</option>
+                                <option value="Semester 4">Semester 4</option>
+                                <option value="Semester 5">Semester 5</option>
+                                <option value="Semester 6">Semester 6</option>
+                                <option value="Graduate">Graduate</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <input type="text" name="student_id" class="form-control" placeholder="Student ID" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <input type="text" name="department" class="form-control" placeholder="Department" required>
-                        </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label text-white">
+                            <i class="fas fa-phone me-1"></i>Phone Number (Optional)
+                        </label>
+                        <input type="tel" class="form-control" name="phone" id="phone" 
+                               placeholder="+91-xxxxxxxxxx">
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <input type="text" name="year" class="form-control" placeholder="Year" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <input type="password" name="password" class="form-control" placeholder="Password" required>
-                        </div>
+
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg pulse">
+                            <i class="fas fa-user-plus me-2"></i>Register Account
+                        </button>
                     </div>
-                    <button type="submit" class="btn btn-primary">Register & Send OTP</button>
-                    <a href="{% url 'login' %}" class="btn btn-link">Already have an account? Login</a>
+
+                    <div class="text-center">
+                        <p class="mb-0 text-white">Already have an account? 
+                            <a href="{% url 'login' %}" class="text-primary">Login here</a>
+                        </p>
+                    </div>
                 </form>
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} mt-3">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        background: rgba(30, 32, 64, 0.45);
+        border: 1.5px solid rgba(255,255,255,0.2);
+    }
+    
+    .card-title {
+        color: #eee !important;
+    }
+    
+    label {
+        color: #eee !important;
+        font-weight: 600;
+    }
+    
+    .text-white {
+        color: #fff !important;
+    }
+    
+    .text-white-50 {
+        color: rgba(255,255,255,0.75) !important;
+    }
+    
+    .form-control {
+        background: rgba(255,255,255,0.15) !important;
+        border: 1px solid rgba(255,255,255,0.3) !important;
+        color: #fff !important;
+        padding: 12px 15px;
+        border-radius: 8px;
+    }
+    
+    .form-control:focus {
+        background: rgba(255,255,255,0.2) !important;
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 0.2rem rgba(87, 106, 230, 0.25) !important;
+        color: #fff !important;
+    }
+    
+    .form-control option {
+        background: #2a2a3a !important;
+        color: #fff !important;
+    }
+    
+    select.form-control {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 16px 12px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(90deg, #576ae6, #5dd6f2);
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 18px;
+        padding: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #475edb, #0fc2e0);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(87, 106, 230, 0.4);
+    }
+    
+    .text-primary {
+        color: var(--primary-color) !important;
+    }
+    
+    .text-danger {
+        color: #ff6b6b !important;
+    }
+    
+    .form-text {
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+    
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(87, 106, 230, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(87, 106, 230, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(87, 106, 230, 0); }
+    }
+    
+    /* Roll number validation styling */
+    input[name="roll_number"]:invalid {
+        border-color: #ff6b6b !important;
+    }
+    
+    input[name="roll_number"]:valid {
+        border-color: #28a745 !important;
+    }
+</style>
+
+<script>
+// Real-time roll number validation
+document.getElementById('roll_number').addEventListener('input', function(e) {
+    const rollNumber = e.target.value;
+    const hasLetter = /[A-Za-z]/.test(rollNumber);
+    const hasDigit = /[0-9]/.test(rollNumber);
+    const isAlphanumeric = /^[A-Za-z0-9]*$/.test(rollNumber);
+    
+    // Remove any existing feedback
+    const existingFeedback = e.target.parentNode.querySelector('.validation-feedback');
+    if (existingFeedback) {
+        existingFeedback.remove();
+    }
+    
+    // Create feedback element
+    const feedback = document.createElement('div');
+    feedback.className = 'validation-feedback form-text';
+    feedback.style.marginTop = '5px';
+    
+    if (rollNumber.length === 0) {
+        return;
+    } else if (!isAlphanumeric) {
+        feedback.innerHTML = '<span style="color: #ff6b6b;"><i class="fas fa-times me-1"></i>Only letters and numbers allowed</span>';
+        e.target.style.borderColor = '#ff6b6b';
+    } else if (!hasLetter || !hasDigit) {
+        feedback.innerHTML = '<span style="color: #ffc107;"><i class="fas fa-exclamation-triangle me-1"></i>Must contain both letters and numbers</span>';
+        e.target.style.borderColor = '#ffc107';
+    } else {
+        feedback.innerHTML = '<span style="color: #28a745;"><i class="fas fa-check me-1"></i>Valid roll number format</span>';
+        e.target.style.borderColor = '#28a745';
+    }
+    
+    e.target.parentNode.appendChild(feedback);
+});
+</script>
+{% endblock %}

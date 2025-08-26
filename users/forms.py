@@ -5,7 +5,7 @@ from .models import UserProfile
 
 class RegistrationForm(UserCreationForm):
     full_name = forms.CharField(max_length=100, required=True)
-    phone = forms.CharField(max_length=15, required=True)
+    phone = forms.CharField(max_length=15, required=False)
     email = forms.EmailField(required=True)
     student_id = forms.CharField(max_length=20, required=True)
     college_email = forms.EmailField(required=True)
@@ -18,7 +18,7 @@ class RegistrationForm(UserCreationForm):
 
     def clean_phone(self):
         phone = self.cleaned_data['phone']
-        if UserProfile.objects.filter(phone=phone).exists():
+        if phone and UserProfile.objects.filter(phone=phone).exists():
             raise forms.ValidationError("Phone number already registered!")
         return phone
 

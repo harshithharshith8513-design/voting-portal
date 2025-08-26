@@ -3,28 +3,228 @@
 {% block title %}Login - Discover College Voting{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3>Student Login</h3>
-            </div>
-            <div class="card-body">
-                <form method="post">
+<div class="row justify-content-center align-items-center min-vh-75">
+    <div class="col-lg-5 col-md-7">
+        <div class="card animate__animated animate__fadeInUp login-card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-vote-yea fa-4x text-primary mb-3"></i>
+                    <h2 class="card-title text-white">Welcome Back</h2>
+                    <p class="text-light">Login with your roll number</p>
+                </div>
+
+                <form method="post" id="loginForm">
                     {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
+                    
+                    <div class="mb-4">
+                        <label for="username" class="form-label text-white">
+                            <i class="fas fa-id-badge me-2"></i>Roll Number
+                        </label>
+                        <input type="text" class="form-control form-control-lg" name="username" 
+                               id="username" placeholder="Enter your roll number" required autofocus>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label text-white">
+                            <i class="fas fa-lock me-2"></i>Password
+                        </label>
+                        <input type="password" class="form-control form-control-lg" name="password" 
+                               id="password" placeholder="Enter your password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
-                    <a href="{% url 'register' %}" class="btn btn-link">New user? Register here</a>
+
+                    <div class="d-grid gap-2 mb-4">
+                        <button type="submit" class="btn btn-primary btn-lg pulse">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="mb-0 text-white">Don't have an account? 
+                            <a href="{% url 'register' %}" class="text-primary">Register here</a>
+                        </p>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .min-vh-75 {
+        min-height: 75vh;
+    }
+    
+    .login-card {
+        background: rgba(30, 32, 64, 0.9) !important;
+        border: 1.5px solid rgba(255,255,255,0.2) !important;
+        box-shadow: 0 15px 35px rgba(87, 106, 230, 0.5) !important;
+    }
+    
+    .card-title {
+        color: #ffffff !important;
+        font-weight: 700;
+    }
+    
+    .text-white {
+        color: #ffffff !important;
+    }
+    
+    .text-light {
+        color: #e9ecef !important;
+    }
+    
+    .form-label {
+        color: #ffffff !important;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .form-control {
+        background: rgba(255,255,255,0.15) !important;
+        border: 1px solid rgba(255,255,255,0.3) !important;
+        color: #ffffff !important;
+        padding: 15px 20px;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+    
+    .form-control::placeholder {
+        color: rgba(255,255,255,0.7) !important;
+    }
+    
+    .form-control:focus {
+        background: rgba(255,255,255,0.25) !important;
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 0.2rem rgba(87, 106, 230, 0.25) !important;
+        color: #ffffff !important;
+    }
+    
+    .form-control-lg {
+        padding: 1rem 1.25rem;
+        font-size: 1.1rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(90deg, #576ae6, #5dd6f2) !important;
+        border: none !important;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 18px;
+        padding: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(87, 106, 230, 0.4);
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #475edb, #0fc2e0) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(87, 106, 230, 0.6) !important;
+    }
+    
+    .text-primary {
+        color: #5dd6f2 !important;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+    
+    .text-primary:hover {
+        color: #ffffff !important;
+        text-decoration: underline;
+    }
+    
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(87, 106, 230, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(87, 106, 230, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(87, 106, 230, 0); }
+    }
+    
+    /* Icon styling */
+    .fa-vote-yea {
+        background: linear-gradient(45deg, #576ae6, #5dd6f2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+</style>
+
+<script>
+// Auto-refresh CSRF token when using saved passwords
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('loginForm');
+    const usernameField = document.getElementById('username');
+    const passwordField = document.getElementById('password');
+    
+    // Check if fields are auto-filled (browser saved passwords)
+    setTimeout(function() {
+        if (usernameField.value && passwordField.value) {
+            console.log('Auto-filled detected, refreshing CSRF token...');
+            refreshCSRFToken();
+        }
+    }, 100);
+    
+    // Also refresh when page gains focus (user comes back)
+    window.addEventListener('focus', function() {
+        if (usernameField.value && passwordField.value) {
+            refreshCSRFToken();
+        }
+    });
+    
+    // Refresh on form focus
+    form.addEventListener('focusin', function() {
+        if (usernameField.value && passwordField.value) {
+            refreshCSRFToken();
+        }
+    });
+    
+    function refreshCSRFToken() {
+        fetch(window.location.href, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newToken = doc.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            if (newToken) {
+                document.querySelector('[name=csrfmiddlewaretoken]').value = newToken;
+                console.log('CSRF token refreshed successfully');
+            }
+        })
+        .catch(error => {
+            console.log('CSRF refresh failed:', error);
+        });
+    }
+    
+    // Form submission handling
+    form.addEventListener('submit', function(e) {
+        const rollNumber = usernameField.value.trim();
+        const password = passwordField.value.trim();
+        
+        if (!rollNumber || !password) {
+            e.preventDefault();
+            alert('Please enter both roll number and password');
+            return;
+        }
+        
+        // Validate roll number format
+        const hasLetter = /[A-Za-z]/.test(rollNumber);
+        const hasDigit = /[0-9]/.test(rollNumber);
+        const isAlphanumeric = /^[A-Za-z0-9]+$/.test(rollNumber);
+        
+        if (!isAlphanumeric || !hasLetter || !hasDigit) {
+            e.preventDefault();
+            alert('Roll number must contain both letters and numbers (alphanumeric only)');
+            return;
+        }
+    });
+});
+</script>
 {% endblock %}

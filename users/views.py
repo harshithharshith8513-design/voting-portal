@@ -2,149 +2,175 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.core.mail import send_mail
-from .models import UserProfile
-import random
+from django.core.exceptions import ValidationError
+from .models import UserProfile, ValidCollegeID
+import re
 
 def register_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
-        student_id = request.POST['student_id']
-        department = request.POST['department']
-        year = request.POST['year']
-        
-        # New fields for OTP functionality
-        phone = request.POST.get('phone', '')
-        full_name = request.POST.get('full_name', '')
+        # Get form data
+        roll_number = request.POST.get('roll_number', '').strip()
+        username = request.POST.get('username', '').strip()  # This is full name now
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
+        student_id = request.POST.get('student_id', '').strip()
+        department = request.POST.get('department', '').strip()
+        year = request.POST.get('year', '').strip()
+        phone = request.POST.get('phone', '').strip()
 
-        # CHECK ALL UNIQUE CONSTRAINTS BEFORE CREATING USER
-        
-        # Check if username already exists
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'Username already taken!')
-            return render(request, 'users/register.html')
+        # Validation
+        errors = []
+
+        # Validate roll number (alphanumeric with both letters and numbers)
+        if not roll_number:
+            errors.append('Roll number is required')
+        elif len(roll_number) < 4:
+            errors.append('Roll number must be at least 4 characters long')
+        elif not re.match(r'^[A-Za-z0-9]+$', roll_number):
+            errors.append('Roll number must contain only letters and numbers')
+        else:
+            # Check if contains both letters and digits
+            has_letter = bool(re.search(r'[A-Za-z]', roll_number))
+            has_digit = bool(re.search(r'[0-9]', roll_number))
+            if not (has_letter and has_digit):
+                errors.append('Roll number must contain both letters and numbers')
             
-        # Check if email already exists in User model
-        if User.objects.filter(email=email).exists():
-            messages.error(request, 'Email already registered!')
-            return render(request, 'users/register.html')
-            
-        # Check if student_id already exists
-        if UserProfile.objects.filter(student_id=student_id).exists():
-            messages.error(request, 'Student ID already registered!')
-            return render(request, 'users/register.html')
-        
-        # Check if phone already exists
-        if phone and UserProfile.objects.filter(phone=phone).exists():
-            messages.error(request, 'Phone number already registered!')
-            return render(request, 'users/register.html')
-            
-        # Check if college_email already exists
-        if UserProfile.objects.filter(college_email=email).exists():
-            messages.error(request, 'College email already registered!')
+            # Check if roll number is unique
+            if User.objects.filter(username=roll_number).exists():
+                errors.append('This roll number is already registered')
+
+        # Validate other required fields
+        if not username:
+            errors.append('Full name is required')
+        if not email:
+            errors.append('Email is required')
+        if not password or len(password) < 6:
+            errors.append('Password must be at least 6 characters long')
+        if not student_id:
+            errors.append('College ID is required')
+        if not department:
+            errors.append('Department is required')
+        if not year:
+            errors.append('Year/Semester is required')
+
+        # Validate College ID exists in valid list
+        if student_id and not ValidCollegeID.objects.filter(college_id=student_id).exists():
+            errors.append('Invalid College ID. Please contact administrator.')
+
+        # Check if College ID already used
+        if student_id and UserProfile.objects.filter(student_id=student_id).exists():
+            errors.append('This College ID is already registered')
+
+        # Check if email already exists
+        if email and User.objects.filter(email=email).exists():
+            errors.append('This email is already registered')
+
+        if errors:
+            for error in errors:
+                messages.error(request, error)
             return render(request, 'users/register.html')
 
-        # Create user but don't activate yet (for OTP verification)
-        user = User.objects.create_user(username=username, email=email, password=password)
-        user.is_active = False  # Will be activated after OTP verification
-        user.save()
-        
-        # Generate OTP
-        otp = f"{random.randint(100000, 999999)}"
-        
-        # Create UserProfile with OTP
-        UserProfile.objects.create(
-            user=user,
-            student_id=student_id,
-            college_email=email,
-            department=department,
-            year=year,
-            phone=phone,
-            full_name=full_name,
-            otp=otp
-        )
+        try:
+            # Create User with roll_number as username
+            user = User.objects.create_user(
+                username=roll_number,  # Roll number is now the username
+                email=email,
+                password=password,
+                first_name=username.split()[0] if username else '',
+                last_name=' '.join(username.split()[1:]) if len(username.split()) > 1 else ''
+            )
 
-        # Print OTP to console (for testing)
-        print(f"SMS OTP: {otp} sent to {phone}")
-        
-        # Store user in session for OTP verification
-        request.session['pending_user'] = user.username
+            # Update the UserProfile created by signals with proper data
+            try:
+                profile = UserProfile.objects.get(user=user)
+                profile.roll_number = roll_number
+                profile.username = username  # Full name stored here
+                profile.student_id = student_id
+                profile.college_email = email
+                profile.department = department
+                profile.year = year
+                profile.phone = phone if phone else None
+                profile.save()
+            except UserProfile.DoesNotExist:
+                # Create profile if signal didn't create it
+                UserProfile.objects.create(
+                    user=user,
+                    roll_number=roll_number,
+                    username=username,
+                    student_id=student_id,
+                    college_email=email,
+                    department=department,
+                    year=year,
+                    phone=phone if phone else None
+                )
 
-        messages.success(request, f'Registration initiated! OTP sent to {phone}. Please verify to complete registration.')
-        return redirect('verify_otp')
+            messages.success(request, 'Registration successful! Please login with your roll number.')
+            return redirect('login')
+
+        except Exception as e:
+            # If user was created but profile failed, clean up
+            try:
+                user = User.objects.get(username=roll_number)
+                user.delete()
+            except:
+                pass
+            messages.error(request, f'Registration failed: {str(e)}')
 
     return render(request, 'users/register.html')
 
-def verify_otp(request):
-    username = request.session.get('pending_user')
-    if not username:
-        messages.error(request, "No pending registration found!")
-        return redirect('register')
-    
-    try:
-        user = User.objects.get(username=username)
-        profile = user.userprofile
-    except:
-        messages.error(request, "Registration not found!")
-        return redirect('register')
-    
-    if request.method == 'POST':
-        otp_entered = request.POST.get('otp')
-        if otp_entered == profile.otp:
-            # Verify phone and activate user
-            profile.is_phone_verified = True
-            profile.otp = ''
-            user.is_active = True
-            user.save()
-            profile.save()
-            
-            # Send welcome email
-            try:
-                send_mail(
-                    "Welcome to Voting Portal!",
-                    f"Dear {profile.full_name or user.username},\n\nThank you for registering! You can now log in to participate in elections.\n\nLogin at: http://127.0.0.1:8000/\n\nBest regards,\nVoting Team",
-                    'noreply@votingportal.com',
-                    [user.email],
-                    fail_silently=False,
-                )
-                print(f"Welcome email sent to {user.email}")
-            except Exception as e:
-                print(f"Email sending failed: {e}")
-            
-            messages.success(request, "Phone verified! Registration complete. You can now log in.")
-            del request.session['pending_user']
-            return redirect('login')
-        else:
-            messages.error(request, "Invalid OTP. Please try again.")
-    
-    return render(request, 'users/verify_otp.html', {'phone': profile.phone})
-
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        roll_number = request.POST.get('username', '').strip()  # Field name is 'username' but contains roll number
+        password = request.POST.get('password', '').strip()
 
-        user = authenticate(request, username=username, password=password)
-        if user:
-            # Check if user's phone is verified (if they have a phone number)
-            try:
-                profile = user.userprofile
-                if profile.phone and not profile.is_phone_verified:
-                    messages.error(request, 'Please verify your phone number first.')
-                    return render(request, 'users/login.html')
-            except UserProfile.DoesNotExist:
-                pass  # Old users might not have profiles yet
+        if not roll_number or not password:
+            messages.error(request, 'Please enter both roll number and password')
+            return render(request, 'users/login.html')
+
+        # Validate roll number format before authentication
+        if roll_number:
+            has_letter = bool(re.search(r'[A-Za-z]', roll_number))
+            has_digit = bool(re.search(r'[0-9]', roll_number))
+            is_alphanumeric = bool(re.match(r'^[A-Za-z0-9]+$', roll_number))
             
+            if not (is_alphanumeric and has_letter and has_digit):
+                messages.error(request, 'Invalid roll number format')
+                return render(request, 'users/login.html')
+
+        user = authenticate(request, username=roll_number, password=password)
+        if user:
             login(request, user)
-            return redirect('dashboard')  # or 'admin_dashboard' if preferred
+            # Safe way to get username - check if profile exists
+            try:
+                welcome_name = user.userprofile.username or user.username
+            except (UserProfile.DoesNotExist, AttributeError):
+                welcome_name = user.username
+            
+            messages.success(request, f'Welcome back, {welcome_name}!')
+            return redirect('dashboard')
         else:
-            messages.error(request, 'Invalid credentials')
+            messages.error(request, 'Invalid roll number or password')
 
     return render(request, 'users/login.html')
 
 def logout_view(request):
     logout(request)
-    messages.success(request, 'You have been logged out successfully.')
+    messages.success(request, 'You have been logged out successfully')
     return redirect('login')
+
+# Additional utility function for safe profile access
+def get_user_profile_safe(user):
+    """Safely get user profile with fallback"""
+    try:
+        return user.userprofile
+    except UserProfile.DoesNotExist:
+        # Create empty profile if doesn't exist
+        return UserProfile.objects.create(
+            user=user,
+            roll_number=user.username,
+            username=f"{user.first_name} {user.last_name}".strip() or user.username,
+            student_id='',
+            college_email=user.email or '',
+            department='',
+            year=''
+        )
