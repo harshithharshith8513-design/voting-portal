@@ -3,7 +3,7 @@
 {% block title %}Election Summary - Discover College Voting{% endblock %}
 
 {% block content %}
-<div class="container my-4">
+<div class="container my-4 bg-white p-4" style="border-radius: 10px;">
     <h2 class="mb-4 text-dark">
         <i class="fas fa-clipboard-list"></i> Election Summary
     </h2>
@@ -56,6 +56,11 @@
 </div>
 
 <style>
+/* White background for the entire page */
+body {
+    background-color: #ffffff !important;
+}
+
 /* Additional custom styles for election summary cards */
 .card {
     min-height: 180px;
