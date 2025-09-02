@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from .models import UserProfile, ValidCollegeID
 import csv
 
+
 @staff_member_required
 def manage_college_ids(request):
     """Manage College IDs with pagination and search"""
@@ -43,6 +44,7 @@ def manage_college_ids(request):
     
     return render(request, 'admin/manage_college_ids.html', context)
 
+
 @staff_member_required
 def add_college_id(request):
     """Add a new College ID"""
@@ -62,18 +64,22 @@ def add_college_id(request):
     
     return redirect('manage_college_ids')
 
+
 @staff_member_required
-def delete_college_id(request, college_id):
+def delete_college_id(request, id):  # ✅ Fixed: Changed parameter name from 'college_id' to 'id'
     """Delete a College ID"""
-    college_id_obj = get_object_or_404(ValidCollegeID, id=college_id)
+    college_id_obj = get_object_or_404(ValidCollegeID, id=id)  # ✅ Fixed: Using 'id' parameter
     
+    # Check if the college ID is currently in use
     if UserProfile.objects.filter(student_id=college_id_obj.college_id).exists():
         messages.error(request, 'Cannot delete College ID - it is currently in use')
     else:
+        college_id_value = college_id_obj.college_id  # Store value before deletion
         college_id_obj.delete()
-        messages.success(request, f'College ID "{college_id_obj.college_id}" deleted successfully')
+        messages.success(request, f'College ID "{college_id_value}" deleted successfully')
     
     return redirect('manage_college_ids')
+
 
 @staff_member_required
 def bulk_add_college_ids(request):
@@ -115,6 +121,7 @@ def bulk_add_college_ids(request):
             messages.error(request, 'No file selected')
     
     return redirect('manage_college_ids')
+
 
 @staff_member_required
 def export_college_ids(request):

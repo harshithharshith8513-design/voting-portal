@@ -9,7 +9,7 @@
             <div class="card-body p-5">
                 <div class="text-center mb-4">
                     <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
-                    <h2 class="card-title text-white">Create Account</h2>
+                    <h2 class="card-title text-dark">Create Account</h2>
                     <p class="text-muted">Register with your College ID to vote</p>
                 </div>
 
@@ -18,19 +18,19 @@
                     
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="roll_number" class="form-label text-white">
+                            <label for="roll_number" class="form-label text-dark">
                                 <i class="fas fa-id-badge me-1"></i>Roll Number <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control" name="roll_number" id="roll_number" 
                                    placeholder="e.g., CS21B001" required pattern="^[A-Za-z0-9]+$"
                                    title="Roll number must contain both letters and numbers">
-                            <div class="form-text text-white-50">
+                            <div class="form-text text-muted">
                                 <i class="fas fa-info-circle me-1"></i>
                                 Must contain both letters and numbers
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="username" class="form-label text-white">
+                            <label for="username" class="form-label text-dark">
                                 <i class="fas fa-user me-1"></i>Full Name
                             </label>
                             <input type="text" class="form-control" name="username" id="username" 
@@ -39,14 +39,14 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="email" class="form-label text-white">
+                        <label for="email" class="form-label text-dark">
                             <i class="fas fa-envelope me-1"></i>College Email
                         </label>
                         <input type="email" class="form-control" name="email" id="email" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="password" class="form-label text-white">
+                        <label for="password" class="form-label text-dark">
                             <i class="fas fa-lock me-1"></i>Password
                         </label>
                         <input type="password" class="form-control" name="password" id="password" 
@@ -54,12 +54,12 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="student_id" class="form-label text-white">
+                        <label for="student_id" class="form-label text-dark">
                             <i class="fas fa-id-card me-1"></i>College ID <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control" name="student_id" id="student_id" 
                                placeholder="Enter your valid College ID" required>
-                        <div class="form-text text-white-50">
+                        <div class="form-text text-muted">
                             <i class="fas fa-info-circle me-1"></i>
                             Only admin-approved College IDs can register
                         </div>
@@ -67,7 +67,7 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="department" class="form-label text-white">
+                            <label for="department" class="form-label text-dark">
                                 <i class="fas fa-building me-1"></i>Department
                             </label>
                             <select class="form-control" name="department" id="department" required>
@@ -81,7 +81,7 @@
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="year" class="form-label text-white">
+                            <label for="year" class="form-label text-dark">
                                 <i class="fas fa-calendar me-1"></i>Year/Semester
                             </label>
                             <select class="form-control" name="year" id="year" required>
@@ -98,7 +98,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="phone" class="form-label text-white">
+                        <label for="phone" class="form-label text-dark">
                             <i class="fas fa-phone me-1"></i>Phone Number (Optional)
                         </label>
                         <input type="tel" class="form-control" name="phone" id="phone" 
@@ -112,7 +112,7 @@
                     </div>
 
                     <div class="text-center">
-                        <p class="mb-0 text-white">Already have an account? 
+                        <p class="mb-0 text-dark">Already have an account? 
                             <a href="{% url 'login' %}" class="text-primary">Login here</a>
                         </p>
                     </div>
@@ -124,50 +124,50 @@
 
 <style>
     .card {
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        background: rgba(30, 32, 64, 0.45);
-        border: 1.5px solid rgba(255,255,255,0.2);
+        box-shadow: 0 10px 30px rgba(125, 23, 220, 0.1);
+        background: #ffffff !important;
+        border: 1px solid rgba(0,0,0,0.1);
     }
     
     .card-title {
-        color: #eee !important;
+        color: #212529 !important;
     }
     
     label {
-        color: #eee !important;
+        color: #212529 !important;
         font-weight: 600;
     }
     
-    .text-white {
-        color: #fff !important;
+    .text-dark {
+        color: #212529 !important;
     }
     
-    .text-white-50 {
-        color: rgba(255,255,255,0.75) !important;
+    .text-muted {
+        color: #6c757d !important;
     }
     
     .form-control {
-        background: rgba(255,255,255,0.15) !important;
-        border: 1px solid rgba(255,255,255,0.3) !important;
-        color: #fff !important;
+        background: #f8f9fa !important;
+        border: 1px solid #ced4da !important;
+        color: #212529 !important;
         padding: 12px 15px;
         border-radius: 8px;
     }
     
     .form-control:focus {
-        background: rgba(255,255,255,0.2) !important;
-        border-color: var(--primary-color) !important;
-        box-shadow: 0 0 0 0.2rem rgba(87, 106, 230, 0.25) !important;
-        color: #fff !important;
+        background: #ffffff !important;
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25) !important;
+        color: #212529 !important;
     }
     
     .form-control option {
-        background: #2a2a3a !important;
-        color: #fff !important;
+        background: #ffffff !important;
+        color: #212529 !important;
     }
     
     select.form-control {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23212529' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
         background-position: right 0.75rem center;
         background-repeat: no-repeat;
         background-size: 16px 12px;
@@ -190,11 +190,11 @@
     }
     
     .text-primary {
-        color: var(--primary-color) !important;
+        color: #0d6efd !important;
     }
     
     .text-danger {
-        color: #ff6b6b !important;
+        color: #dc3545 !important;
     }
     
     .form-text {
@@ -214,7 +214,7 @@
     
     /* Roll number validation styling */
     input[name="roll_number"]:invalid {
-        border-color: #ff6b6b !important;
+        border-color: #dc3545 !important;
     }
     
     input[name="roll_number"]:valid {
@@ -244,8 +244,8 @@ document.getElementById('roll_number').addEventListener('input', function(e) {
     if (rollNumber.length === 0) {
         return;
     } else if (!isAlphanumeric) {
-        feedback.innerHTML = '<span style="color: #ff6b6b;"><i class="fas fa-times me-1"></i>Only letters and numbers allowed</span>';
-        e.target.style.borderColor = '#ff6b6b';
+        feedback.innerHTML = '<span style="color: #dc3545;"><i class="fas fa-times me-1"></i>Only letters and numbers allowed</span>';
+        e.target.style.borderColor = '#dc3545';
     } else if (!hasLetter || !hasDigit) {
         feedback.innerHTML = '<span style="color: #ffc107;"><i class="fas fa-exclamation-triangle me-1"></i>Must contain both letters and numbers</span>';
         e.target.style.borderColor = '#ffc107';
