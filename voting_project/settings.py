@@ -121,7 +121,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'discovervotingpotal@gmail.com'  # Your project Gmail
-EMAIL_HOST_PASSWORD = 'password'  # Your App Password
+EMAIL_HOST_PASSWORD = 'vlvd zkjw nefn csnj'  # Your App Password
 DEFAULT_FROM_EMAIL = 'discovervotingpotal@gmail.com'
 SERVER_EMAIL = 'discovervotingpotal@gmail.com'
 

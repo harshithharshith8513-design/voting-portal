@@ -21,3 +21,4 @@ A secure Django-based voting system for college elections.
 - Admin panel for election management
 - Real-time results
 - Mobile responsive design
+vlvd zkjw nefn csnj --------------
