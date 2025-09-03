@@ -1,12 +1,11 @@
 import os
 from decouple import config, Csv
-import dj_database_url
 from .base import *
 
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-# Robust ALLOWED_HOSTS configuration
+# ALLOWED_HOSTS configuration
 ALLOWED_HOSTS = []
 
 # Parse from environment variable (comma-separated)
@@ -28,11 +27,12 @@ ALLOWED_HOSTS.extend([
 # Remove duplicates and empty values
 ALLOWED_HOSTS = list(set([host for host in ALLOWED_HOSTS if host]))
 
-# Database configuration
+# SQLite Database configuration
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
 
 # Static files with WhiteNoise
