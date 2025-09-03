@@ -1,25 +1,22 @@
 import os
+from decouple import config, Csv
 import dj_database_url
 from .base import *
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
-DEBUG = False
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-# Handle ALLOWED_HOSTS from environment variable
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '')
-if ALLOWED_HOSTS:
-    ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS.split(',')]
-else:
-    ALLOWED_HOSTS = []
+# This properly handles comma-separated ALLOWED_HOSTS
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
 
-# Database
+# Database configuration
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
+        default=config('DATABASE_URL')
     )
 }
 
-# Static files
+# Static files with WhiteNoise
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
