@@ -5,8 +5,8 @@ A secure Django-based voting system for college elections.
 ## Setup Instructions
 
 1. Extract the zip file
-2. Install Python 3.8+
-3. Install MySQL
+2. Install Python 
+3. version 3.8+
 4. Create virtual environment: `python -m venv venv`
 5. Activate virtual environment: `source venv/bin/activate` (Linux/Mac) or `venv\Scripts\activate` (Windows)
 6. Install requirements: `pip install -r requirements.txt`
