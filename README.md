@@ -14,6 +14,7 @@ A secure Django-based voting system for college elections.
 8. Run migrations: `python manage.py migrate`
 9. Create superuser: `python manage.py createsuperuser`
 10. Run server: `python manage.py runserver`
+11. its running at : https://voting-portal-2.onrender.com
 
 ## Features
 - User registration and authentication
