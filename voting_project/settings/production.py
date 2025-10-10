@@ -4,15 +4,18 @@ import dj_database_url
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = False
-ALLOWED_HOSTS = ['voting-portal-2.onrender.com']
+ALLOWED_HOSTS = ['voting-portal-2.onrender.com','127.0.0.1']
 
 # Database
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL', f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}"),
+        conn_max_age=600,
+    )
 }
+
 
 # Static files with WhiteNoise
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
