@@ -1,0 +1,12 @@
+{
+  "name": "Django with PostgreSQL",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput",
+  "forwardPorts": [8000],
+  "containerEnv": {
+    "DATABASE_URL": "postgresql://postgres:postgres@db:5432/voting_portal"
+  }
+}
